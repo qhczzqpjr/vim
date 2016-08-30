@@ -154,6 +154,7 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 
 " vim-colors-solarized
 syntax enable
+colorscheme solarized
 " set background=dark
 
 if has('gui_running')
