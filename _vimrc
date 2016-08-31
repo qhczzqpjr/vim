@@ -1,5 +1,4 @@
-source $VIMRUNTIME/mswin.vim
-" load Neobundle
+" load Neobundle {{{
 " source .\vimfiles\config\pluginManager.vim
 " Note: Skip initialization for vim-tiny or vim-small.
  if 0 | endif
@@ -65,7 +64,9 @@ source $VIMRUNTIME/mswin.vim
  " If there are uninstalled bundles found on startup,
  " this will conveniently prompt you to install them.
  NeoBundleCheck
+" }}}
 
+source $VIMRUNTIME/mswin.vim
 
 set backspace=2 " make backspace work like most other apps
 set backspace=indent,eol,start " allow backspacing over everything in insert mode
@@ -90,7 +91,29 @@ set textwidth=0
 set wrapmargin=0
 set formatoptions+=l
 "set autochdir
+set foldmethod=marker
 
+" Set mapleader
+let mapleader=","
+" Support quick VIMRC edit and load
+nnoremap <leader>sv :source $MYVIMRC<cr>
+nnoremap <leader>ev :vsplit $MYVIMRC<cr>
+
+" Don't use Ex mode, use Q for formatting
+map Q gq
+" map <leader>cd :cd C:\Users\qz55554\Documents\Db<CR>
+
+" CTRL-U in insert mode deletes a lot.  Use CTRL-G u to first break undo,
+" so that you can undo CTRL-U after inserting a line break.
+inoremap <C-U> <C-G>u<C-U>
+
+" map sort function to a key
+vnoremap <leader>s :sort<CR>
+" format indent
+vnoremap < <gv
+vnoremap > >gv
+
+" file encoding
 if has("multi_byte")
   if &termencoding == ""
     let &termencoding = &encoding
@@ -100,7 +123,8 @@ if has("multi_byte")
   "setglobal bomb
   set fileencodings=ucs-bom,utf-8,latin1
 endif
-"""""""""""""""""""""" Window Section - Start """"""""""""""""""""
+
+" Window Section {{{
 " GUI controEnd
 :set guioptions-=m  "remove menu bar
 :set guioptions-=T  "remove toolbar
@@ -119,40 +143,20 @@ map <silent> <A-v> :vsplit<CR>
 map <silent> <A-n> <C-w><C-w>
 map <silent> <A-p> <C-w><S-w>
 
-"""""""""""""""""""""" Window Section - End """""""""""""""""""
+" }}}
 
-" Set mapleader
-let mapleader=","
-" Support quick VIMRC edit and load
-nnoremap <leader>sv :source $MYVIMRC<cr>
-nnoremap <leader>ev :vsplit $MYVIMRC<cr>
-
-" Don't use Ex mode, use Q for formatting
-map Q gq
-" map <leader>cd :cd C:\Users\qz55554\Documents\Db<CR>
-" map <leader>tp <esc>:tabp<CR>
-" map <leader>tn <esc>:tabn<CR>
-
-" CTRL-U in insert mode deletes a lot.  Use CTRL-G u to first break undo,
-" so that you can undo CTRL-U after inserting a line break.
-inoremap <C-U> <C-G>u<C-U>
-
-" map sort function to a key
-vnoremap <leader>s :sort<CR>
-vnoremap < <gv
-vnoremap > >gv
-
-" Fugitive
+" Fugitive {{{
 autocmd QuickFixCmdPost *grep* cwindow
+" }}}
 
-
-" Nerdtree
+" Nerdtree {{{
 map <leader>n :NERDTreeToggle<CR>
 let g:NERDTreeDirArrowExpandable = '+'
 let g:NERDTreeDirArrowCollapsible = '~'
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" }}}
 
-" vim-colors-solarized
+" vim-colors-solarized {{{
 syntax enable
 colorscheme solarized
 " set background=dark
@@ -162,16 +166,18 @@ if has('gui_running')
 else
   set background=dark
 endif
+" }}}
 
-" vim-airline
+" vim-airline {{{
 let g:airline#extenions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
 
 " vim-airline_theme
 let g:airline_theme='dark'
+" }}}
 
-" syntastic
+" syntastic {{{
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
@@ -180,8 +186,9 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+"}}}
 
-" vim-easymotion
+" vim-easymotion {{{
 let g:EasyMotion_smartcase = 1
 "let g:EasyMotion_startofline = 0 " keep cursor colum when JK motion
 map <Leader><leader>h <Plug>(easymotion-linebackward)
@@ -189,23 +196,9 @@ map <Leader><Leader>j <Plug>(easymotion-j)
 map <Leader><Leader>k <Plug>(easymotion-k)
 map <Leader><leader>l <Plug>(easymotion-lineforward)
 map <Leader><leader>. <Plug>(easymotion-repeat)
+" }}}
 
-" ctrlp
-"let g:ctrlp_map = '<c-p>'
-"let g:ctrlp_cmd = 'CtrlP'
-"let g:ctrlp_working_path_mode = 'ra'
-"set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
-"set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
-"let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
-"let g:ctrlp_custom_ignore = {
-"  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
-"  \ 'file': '\v\.(exe|so|dll)$',
-"  \ 'link': 'some_bad_symbolic_links',
-"  \ }
-"let g:ctrlp_user_command = 'find %s -type f'        " MacOSX/Linux
-"let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'  " Windows
-
-" tagbar
+" tagbar {{{
 nmap <F8> :TagbarToggle<CR>
 
 let g:tagbar_ctags_bin = '.\vimfiles\ctags58\ctags.exe'
@@ -221,8 +214,9 @@ let g:tagbar_autofocus = 1
 let g:tagbar_sort = 0
 let g:tagbar_compact = 1
 let g:tagbar_autofocus = 1
+" }}}
 
-" Unite
+" Unite {{{
 nnoremap <C-l> : Unite file file_rec buffer everything<CR>
 let g:unite_source_menu_menus = get(g:,'unite_source_menu_menus',{})
 let g:unite_source_menu_menus.git = {
@@ -260,16 +254,15 @@ let g:unite_source_menu_menus.git.command_candidates = [
         \'Gcd'],
     \]
 nnoremap <silent>[menu]g :Unite -silent -start-insert menu:git<CR>
+" }}}
 
-" ---------------------------------- "
-" Configure Ultisnip and YouCompleteMe
-" ---------------------------------- "
-
+" Ultisnip {{{
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+" }}}
 
-" YouCommpleteMe
+" YouCommpleteMe {{{
 let g:ycm_collect_identifiers_from_tags_files = 1 " Let YCM read tags from Ctags file
 let g:ycm_use_ultisnips_completer = 1 " Default 1, just ensure
 let g:ycm_seed_identifiers_with_syntax = 1 " Completion for programming language's keyword
@@ -282,9 +275,7 @@ let g:ycm_key_list_previous_completion = ['<C-k>', '<Up>']
 " Goto definition with F3
 map <F3> :YcmCompleter GoTo<CR>
 
-" ---------------------------------- "
-" Configure MiniBufExpl
-" ---------------------------------- "
+" }}}
 
-" Open MiniBufExpl with Ctrl-m
-map <C-m> :MBEToggle<CR>
+" Configure MiniBufExpl
+map <C-m> :MBEToggle<CR> " Open MiniBufExpl with Ctrl-m
