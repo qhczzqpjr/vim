@@ -13,6 +13,7 @@
 
  NeoBundleFetch 'Shougo/neobundle.vim'
  NeoBundle 'scrooloose/nerdtree'
+ NeoBundle 'scrooloose/nerdcommenter'
  NeoBundle 'tpope/vim-fugitive'
  NeoBundle 'low-ghost/nerdtree-fugitive'
  "NeoBundle 'Xuyuanp/nerdtree-git-plugin'
@@ -56,6 +57,7 @@
  "NeoBundle 'edkolev/tmuxline.vim'
  "NeoBundle 'benmills/vimux'
  "NeoBundle 'kien/ctrlp.vim'
+ " NeoBundle 'chusiang/vim-sdcv'
 
  call neobundle#end()
 
@@ -73,35 +75,56 @@ set backspace=indent,eol,start " allow backspacing over everything in insert mod
 
 set ruler		" show the cursor position all the time
 set nu "show line number
-set relativenumber
-set history=50		" keep 50 lines of command line history
+set history=500		" keep 50 lines of command line history
 set showcmd		" display incomplete commands
-set incsearch		" do incremental searching
-set hlsearch " highlight search result
-set ignorecase
 
-set smartindent
-set smarttab
-set expandtab
+set incsearch		" do incremental searching
+set ignorecase " Ignore case when searching
+set smartcase " When searing try to be smark about cases
+set hlsearch " highlight search result
+
+" For regular expressions turn magic on
+set magic
+" " [   ]
+" Don't redraw while executing macros (good performance config)
+set lazyredraw
+
+set expandtab " Use spaces instead of tabs
+set smarttab " Be smart when using tabs ;)
+" 1 tab == 4 spaces
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
+
+set autoindent
+set smartindent
 set backspace=2
 set textwidth=0
 set wrapmargin=0
 set formatoptions+=l
 "set autochdir
 set foldmethod=marker
+" A buffer becomes hidden when it is abandoned
+set hid
 
-" Set mapleader
+
+
+" With a map leader it's possible to do extra key combinations
+" like <leader>w saves the current file
 let mapleader=","
+let g:mapleader=","
+
 " Support quick VIMRC edit and load
 nnoremap <leader>sv :source $MYVIMRC<cr>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 
 " Don't use Ex mode, use Q for formatting
 map Q gq
+" Switch CWD to the directory of the open buffer
+map <leader>cd :cd %:p:h<cr>:pwd<cr>
 " map <leader>cd :cd C:\Users\qz55554\Documents\Db<CR>
+" Return to last edit position when opening files (You want this!)
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
 " CTRL-U in insert mode deletes a lot.  Use CTRL-G u to first break undo,
 " so that you can undo CTRL-U after inserting a line break.
@@ -113,7 +136,8 @@ vnoremap <leader>s :sort<CR>
 vnoremap < <gv
 vnoremap > >gv
 
-" file encoding
+" file encoding {{{
+set encoding=utf-8
 if has("multi_byte")
   if &termencoding == ""
     let &termencoding = &encoding
@@ -123,6 +147,19 @@ if has("multi_byte")
   "setglobal bomb
   set fileencodings=ucs-bom,utf-8,latin1
 endif
+" }}}
+
+" file backup {{{
+set nobackup
+set nowb
+set noswapfile
+" Turn persistent undo on.means that you can undo even when you close a buffer/VIM
+try
+    set undodir=./vimfiles/temp_dirs/undodir
+    set undofile
+catch
+endtry
+" }}}
 
 " Window Section {{{
 " GUI controEnd
@@ -279,3 +316,50 @@ map <F3> :YcmCompleter GoTo<CR>
 
 " Configure MiniBufExpl
 map <C-m> :MBEToggle<CR> " Open MiniBufExpl with Ctrl-m
+
+" rainbow_parentheses.vim {{{
+let g:rbpt_colorpairs = [
+    \ ['brown',       'RoyalBlue3'],
+    \ ['Darkblue',    'SeaGreen3'],
+    \ ['darkgray',    'DarkOrchid3'],
+    \ ['darkgreen',   'firebrick3'],
+    \ ['darkcyan',    'RoyalBlue3'],
+    \ ['darkred',     'SeaGreen3'],
+    \ ['darkmagenta', 'DarkOrchid3'],
+    \ ['brown',       'firebrick3'],
+    \ ['gray',        'RoyalBlue3'],
+    \ ['black',       'SeaGreen3'],
+    \ ['darkmagenta', 'DarkOrchid3'],
+    \ ['Darkblue',    'firebrick3'],
+    \ ['darkgreen',   'RoyalBlue3'],
+    \ ['darkcyan',    'SeaGreen3'],
+    \ ['darkred',     'DarkOrchid3'],
+    \ ['red',         'firebrick3'],
+    \ ]
+let g:rbpt_max = 16
+let g:rbpt_loadcmd_toggle = 0
+au VimEnter * RainbowParenthesesToggle
+au Syntax * RainbowParenthesesLoadRound
+au Syntax * RainbowParenthesesLoadSquare
+au Syntax * RainbowParenthesesLoadBraces
+au Syntax * RainbowParenthesesLoadChevrons
+" }}}
+
+" customerize setting {{{
+" Delete trailing white space on save, useful for Python and CoffeeScript ;)
+func! DeleteTrailingWS()
+  exe "normal mz"
+  %s/\s\+$//ge
+  exe "normal `z"
+endfunc
+
+func! DeleteBlankLine()
+  exe "normal mz"
+  g/^\s*$/de
+  exe "normal `z"
+endfunc
+
+autocmd BufWrite *.sql :call DeleteBlankLine()
+autocmd BufWrite *.py :call DeleteTrailingWS()
+autocmd BufWrite *.coffee :call DeleteTrailingWS()
+" }}}
